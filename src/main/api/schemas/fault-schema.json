@@ -1,0 +1,70 @@
+{
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "properties": {
+    "decisioningServiceResponse": {
+      "$id": "/properties/decisioningServiceResponse",
+      "type": "object",
+      "properties": {
+        "common": {
+          "$id": "/properties/decisioningServiceResponse/properties/common",
+          "type": "object",
+          "properties": {
+            "messageId": {
+              "$id": "/properties/decisioningServiceResponse/properties/common/properties/messageId",
+              "type": "string",
+              "title": "The Messageid Schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                "78a5bb00-e485-11e7-b12e-f2f520524153"
+              ]
+            },
+            "responseTime": {
+              "$id": "/properties/decisioningServiceResponse/properties/common/properties/responseTime",
+              "type": "string",
+              "title": "The Responsetime Schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                "2017-12-19T11:56:07.718000Z"
+              ]
+            },
+            "returnCode": {
+              "$id": "/properties/decisioningServiceResponse/properties/common/properties/returnCode",
+              "type": "string",
+              "title": "The Returncode Schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                "400"
+              ]
+            },
+            "returnReason": {
+              "$id": "/properties/decisioningServiceResponse/properties/common/properties/returnReason",
+              "type": "string",
+              "title": "The Returnreason Schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                "Bad request"
+              ]
+            },
+            "diagText": {
+              "$id": "/properties/decisioningServiceResponse/properties/common/properties/diagText",
+              "type": "string",
+              "title": "The Diagtext Schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                "exception message"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+
+	<sub-flow name="PoloniexOperation">
+		<choice doc:name="ValidOperationCheck">
+			<when expression="#[flowVars.operationNameVar.equalsIgnoreCase('balanceCheck')]">
+				<logger level="INFO" message="BalanceCheck operation"
+					doc:name="BalanceCheck" />
+				<logger message="Invoke Poloniex BalanceCheck request" level="INFO"
+					doc:name="Poloniex_BalanceCheck" />
+				<flow-ref name="SuccessRequestResponse" doc:name="SuccessRequestResponse" />
+			</when>
+			<when expression="#[flowVars.operationNameVar.equalsIgnoreCase('buy')]">
+				<logger level="INFO" message="Buy operation" doc:name="Buy" />
+				<choice doc:name="ValidBuyCheck">
+					<when
+						expression="#[flowVars.currencyPairVar !=null &amp;&amp; flowVars.rateVar !=null &amp;&amp; flowVars.amountVar !=null]">
+						<logger message="Invoke Poloniex Buy request" level="INFO"
+							doc:name="Poloniex_Buy" />
+						<flow-ref name="SuccessRequestResponse" doc:name="SuccessRequestResponse" />
+					</when>
+					<otherwise>
+						<logger
+							message="currencyPair,rate,amount are mandatory for Poloniex buy operation"
+							level="INFO" doc:name="InvalidBuyReqLog" />
+						<set-variable variableName="failedDescription"
+							value="#['currencyPair,rate,amount are mandatory for Poloniex buy operation']"
+							doc:name="failedDescription" />
+						<flow-ref name="FailedRequestResponse" doc:name="FailedRequestResponse" />
+					</otherwise>
+				</choice>
+			</when>
+			<when expression="#[flowVars.operationNameVar.equalsIgnoreCase('sell')]">
+				<logger level="INFO" message="Sell operation" doc:name="Sell" />
+				<choice doc:name="ValidSellCheck">
+					<when
+						expression="#[flowVars.currencyPairVar !=null &amp;&amp; flowVars.rateVar !=null &amp;&amp; flowVars.amountVar !=null]">
+						<logger message="Invoke Poloniex Sell request" level="INFO"
+							doc:name="Poloniex_Sell" />
+						<flow-ref name="SuccessRequestResponse" doc:name="SuccessRequestResponse" />
+					</when>
+					<otherwise>
+						<logger
+							message="currencyPair,rate,amount are mandatory for Poloniex sell operation"
+							level="INFO" doc:name="InvalidSellReqLog" />
+						<set-variable variableName="failedDescription"
+							value="#['currencyPair,rate,amount are mandatory for Poloniex sell operation']"
+							doc:name="failedDescription" />
+						<flow-ref name="FailedRequestResponse" doc:name="FailedRequestResponse" />
+					</otherwise>
+				</choice>
+			</when>
+			<when expression="#[flowVars.operationNameVar.equalsIgnoreCase('cancelOrder')]">
+				<logger level="INFO" message="CancelOrder operation"
+					doc:name="CancelOrder" />
+				<choice doc:name="ValidCancelOrderCheck">
+					<when expression="#[flowVars.orderNumberVar !=null]">
+						<logger message="Invoke Poloniex Cancel Order request"
+							level="INFO" doc:name="Poloniex_CancelOrder" />
+						<flow-ref name="SuccessRequestResponse" doc:name="SuccessRequestResponse" />
+					</when>
+					<otherwise>
+						<logger level="INFO"
+							message="orderNumber is mandatory for Poloniex cancelOrder operation"
+							doc:name="InvalidCancelOrderReqLog" />
+						<set-variable variableName="failedDescription"
+							value="#['orderNumber is mandatory for Poloniex cancelOrder operation']"
+							doc:name="failedDescription" />
+						<flow-ref name="FailedRequestResponse" doc:name="FailedRequestResponse" />
+					</otherwise>
+				</choice>
+			</when>
+			<when expression="#[flowVars.operationNameVar.equalsIgnoreCase('tradeHistory')]">
+				<logger level="INFO" message="TradeHistory operation"
+					doc:name="TradeHistory" />
+				<logger
+					message="Invoke Poloniex TradeHistory request - withh curreny pair all if not available in request"
+					level="INFO" doc:name="Poloniex_TradeHistory" />
+				<flow-ref name="SuccessRequestResponse" doc:name="SuccessRequestResponse" />
+			</when>
+			<when
+				expression="#[flowVars.operationNameVar.equalsIgnoreCase('transferBalance')]">
+				<logger level="INFO" message="TransferBalance operation"
+					doc:name="TransferBalance" />
+				<choice doc:name="ValidTransferBalanceCheck">
+					<when
+						expression="#[flowVars.currencyVar !=null &amp;&amp; flowVars.amountVar !=null &amp;&amp; flowVars.fromAccountVar !=null &amp;&amp; flowVars.toAccountVar !=null]">
+						<logger message="Invoke Poloniex BalanceTransfer request"
+							level="INFO" doc:name="Poloniex_BalanceTransfer" />
+						<flow-ref name="SuccessRequestResponse" doc:name="SuccessRequestResponse" />
+					</when>
+					<otherwise>
+						<logger level="INFO"
+							message="currency,amount,fromAccount,toAccount are mandatory for Poloniex Balance transfer operation"
+							doc:name="InvalidBalanceTransferReqLog" />
+						<set-variable variableName="failedDescription"
+							value="#['currency,amount,fromAccount,toAccount are mandatory for Poloniex Balance transfer operation']"
+							doc:name="failedDescription" />
+						<flow-ref name="FailedRequestResponse" doc:name="FailedRequestResponse" />
+					</otherwise>
+				</choice>
+			</when>
+			<otherwise>
+				<logger level="INFO" message="Operation Not Supported"
+					doc:name="OperationNotSupported" />
+				<set-variable variableName="failedDescription"
+					value="#['Operation not supported']" doc:name="failedDescription" />
+				<flow-ref name="FailedRequestResponse" doc:name="FailedRequestResponse" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+
+</mule>

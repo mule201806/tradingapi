@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="apikit-not-found-exception-routes">
+		<logger message="Exception type: #[exception.stackTrace]"
+			level="INFO" doc:name="LogError" />
+		<logger
+			message="Exception source: #[exception.event], Exception details: #[exception.cause]"
+			level="INFO" doc:name="LogErrorDetails" />
+		<copy-properties propertyName="*" doc:name="Copy Header Property" />
+		<set-property propertyName="http.status" value="#['404']"
+			doc:name="SetHttpStatus" />
+		<set-variable variableName="diagText"
+			value="#[exception.message]" doc:name="diagText" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "404",
+      "returnReason": "Resource not found",
+      "diagText": flowVars.diagText
+   }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+
+	<sub-flow name="apikit-method-not-allowed-exception-routes">
+		<logger message="Exception type: #[exception.stackTrace]"
+			level="INFO" doc:name="LogError" />
+		<logger
+			message="Exception source: #[exception.event], Exception details: #[exception.cause]"
+			level="INFO" doc:name="LogErrorDetails" />
+		<copy-properties propertyName="*" doc:name="Copy Header Property" />
+		<set-property propertyName="http.status" value="#['405']"
+			doc:name="SetHttpStatus" />
+		<set-variable variableName="diagText"
+			value="#[exception.message]" doc:name="diagText" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "405",
+      "returnReason": "Method not allowed",
+      "diagText": flowVars.diagText
+   }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+
+	<sub-flow name="apikit-unsupported-media-type-exception-routes">
+		<logger message="Exception type: #[exception.stackTrace]"
+			level="INFO" doc:name="LogError" />
+		<logger
+			message="Exception source: #[exception.event], Exception details: #[exception.cause]"
+			level="INFO" doc:name="LogErrorDetails" />
+		<copy-properties propertyName="*" doc:name="Copy Header Property" />
+		<set-property propertyName="http.status" value="#['415']"
+			doc:name="SetHttpStatus" />
+		<set-variable variableName="diagText"
+			value="#[exception.message]" doc:name="diagText" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "415",
+      "returnReason": "Unsupported Media type",
+      "diagText": flowVars.diagText
+   }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+
+
+	<sub-flow name="apikit-notacceptable-exception-routes">
+		<logger message="Exception type: #[exception.stackTrace]"
+			level="INFO" doc:name="LogError" />
+		<logger
+			message="Exception source: #[exception.event], Exception details: #[exception.cause]"
+			level="INFO" doc:name="LogErrorDetails" />
+		<copy-properties propertyName="*" doc:name="Copy Header Property" />
+		<set-property propertyName="http.status" value="#['406']"
+			doc:name="SetHttpStatus" />
+		<set-variable variableName="diagText"
+			value="#[exception.message]" doc:name="diagText" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "406",
+      "returnReason": "Not accepted",
+      "diagText": flowVars.diagText
+   }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+
+	<sub-flow name="apikit-badrequest-exception-routes">
+		<logger message="Exception type: #[exception.stackTrace]"
+			level="INFO" doc:name="LogError" />
+		<logger
+			message="Exception source: #[exception.event], Exception details: #[exception.cause]"
+			level="INFO" doc:name="LogErrorDetails" />
+		<copy-properties propertyName="*" doc:name="Copy Header Property" />
+		<set-property propertyName="http.status" value="#['400']"
+			doc:name="SetHttpStatus" />
+		<set-variable variableName="diagText"
+			value="#[exception.message]" doc:name="diagText" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "400",
+      "returnReason": "Bad request",
+      "diagText": flowVars.diagText
+   }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+
+	<sub-flow name="generic-exception-routes">
+		<logger message="Exception type: #[exception.stackTrace]"
+			level="INFO" doc:name="LogError" />
+		<logger
+			message="Exception source: #[exception.event], Exception details: #[exception.cause]"
+			level="INFO" doc:name="LogErrorDetails" />
+		<copy-properties propertyName="*" doc:name="Copy Header Property" />
+		<set-property propertyName="http.status" value="#['500']"
+			doc:name="SetHttpStatus" />
+		<set-variable variableName="diagText"
+			value="#[exception.message]" doc:name="diagText" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "500",
+      "returnReason": "Internal server error",
+      "diagText": flowVars.diagText
+   }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+</mule>

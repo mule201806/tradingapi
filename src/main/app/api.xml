@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	<http:listener-config name="api-httpListenerConfig"
+		host="${api.host}" port="${api.port}" doc:name="HTTP Listener Configuration" />
+	<apikit:config name="api-config" raml="api.raml"
+		consoleEnabled="true" consolePath="console" doc:name="Router" />
+	<flow name="api-main">
+		<http:listener config-ref="api-httpListenerConfig" path="/api/*"
+			doc:name="HTTP" />
+		<apikit:router config-ref="api-config" doc:name="APIkit Router" />
+		<exception-strategy
+			ref="global-exception-handler-choice-exception-strategy" doc:name="Reference Exception Strategy" />
+	</flow>
+	<flow name="get:/trade:api-config">
+		<flow-ref name="GetRequestDetails" doc:name="GetRequestDetails" />
+		<logger level="INFO" doc:name="RequestDetailsLog"
+			message="RequestLog details - exchangeName: #[flowVars.exchangeNameVar], tradingKey: #[flowVars.tradingKeyVar], tradingSecret: #[flowVars.tradingKeyVar], operationName: #[flowVars.operationNameVar], currencyPair: #[flowVars.currencyPairVar], rate: #[flowVars.rateVar], amount: #[flowVars.amountVar], orderNumber: #[flowVars.orderNumberVar], currency: #[flowVars.currencyVar], fromAccount: #[flowVars.fromAccountVar], toAccount: #[flowVars.toAccountVar]" />
+		<choice doc:name="ExchangeCheck">
+			<when expression="#[flowVars.exchangeNameVar.equalsIgnoreCase('poloniex')]">
+				<logger message="Poloniex exchange" level="INFO" doc:name="Poloniex" />
+				<flow-ref name="PoloniexOperation" doc:name="PoloniexOperation" />
+			</when>
+			<when expression="#[flowVars.exchangeNameVar.equalsIgnoreCase('bitfinex')]">
+				<logger message="Bitfinex exchange" level="INFO" doc:name="Bitfinex" />
+				<flow-ref name="BitfineOperation" doc:name="BitfineOperation" />
+			</when>
+			<when expression="#[flowVars.exchangeNameVar.equalsIgnoreCase('bittrex')]">
+				<logger message="Bittrex exchange" level="INFO" doc:name="Bittrex" />
+				<flow-ref name="BittrexOperation" doc:name="BittrexOperation" />
+			</when>
+			<otherwise>
+				<logger message="Exchange not supported" level="INFO"
+					doc:name="ExchangeNotSupported" />
+				<set-variable variableName="failedDescription"
+					value="#['Exchange not supported']" doc:name="failedDescription" />
+				<flow-ref name="FailedRequestResponse" doc:name="FailedRequestResponse" />
+			</otherwise>
+		</choice>
+		<!-- <set-payload
+			value="{&#xA;  &quot;tradingServiceResponse&quot;: {&#xA;    &quot;common&quot;: {&#xA;      &quot;messageId&quot;: &quot;32713830-fcf4-11e7-91d9-0050569a45e6&quot;,&#xA;      &quot;responseTime&quot;: &quot;2018-01-19T08:39:00.859000Z&quot;,&#xA;      &quot;returnCode&quot;: &quot;200&quot;,&#xA;      &quot;returnReason&quot;: &quot;Ok&quot;&#xA;    },&#xA;    &quot;rusResponse&quot;: {&#xA;      &quot;externalSystemResponseDetails&quot;: {&#xA;        &quot;serviceResponsePayload&quot;: {&#xA;          &quot;dpsHeader&quot;: {&#xA;            &quot;trackingId&quot;: &quot;2344554454&quot;,&#xA;            &quot;applicationid&quot;: &quot;TESTJSO&quot;,&#xA;            &quot;aliasName&quot;: &quot;GCI&quot;,&#xA;            &quot;requestType&quot;: &quot;DECISIONING&quot;,&#xA;            &quot;requestFormat&quot;: &quot;JSON&quot;,&#xA;            &quot;traceLevel&quot;: &quot;0&quot;,&#xA;            &quot;responseCode&quot;: &quot;000&quot;,&#xA;            &quot;errorCode&quot;: &quot;a&quot;,&#xA;            &quot;errorDesc&quot;: &quot;a&quot;,&#xA;            &quot;responseheaderFiller&quot;: &quot;a&quot;,&#xA;            &quot;dacode&quot;: 0&#xA;          },&#xA;          &quot;responsePayloadData&quot;: {&#xA;            &quot;dpsService405&quot;: {&#xA;              &quot;serviceRequestPayload&quot;: {&#xA;                &quot;dpsHeader&quot;: {&#xA;                  &quot;trackingId&quot;: &quot;2344554454&quot;,&#xA;                  &quot;applicationid&quot;: &quot;TESTJSO&quot;,&#xA;                  &quot;aliasName&quot;: &quot;GCI&quot;,&#xA;                  &quot;requestType&quot;: &quot;DECISIONING&quot;,&#xA;                  &quot;requestFormat&quot;: &quot;JSON&quot;,&#xA;                  &quot;traceLevel&quot;: &quot;0&quot;&#xA;                },&#xA;                &quot;requestPayloadData&quot;: {&#xA;                  &quot;DAJSONDocument&quot;: {&#xA;                    &quot;OCONTROL&quot;: {&#xA;                      &quot;ALIAS&quot;: {&#xA;                        &quot;data_type&quot;: &quot;text&quot;,&#xA;                        &quot;value&quot;: &quot;GCI&quot;&#xA;                      },&#xA;                      &quot;SIGNATURE&quot;: {&#xA;                        &quot;data_type&quot;: &quot;text&quot;,&#xA;                        &quot;value&quot;: &quot;GCI&quot;&#xA;                      },&#xA;                      &quot;EDITION&quot;: {&#xA;                        &quot;data_type&quot;: &quot;numeric&quot;,&#xA;                        &quot;value&quot;: 1&#xA;                      },&#xA;                      &quot;OBJECTIVE&quot;: {&#xA;                        &quot;data_type&quot;: &quot;text&quot;,&#xA;                        &quot;value&quot;: &quot;DPF Global Composite Insurance, Revision 1.1&quot;&#xA;                      },&#xA;                      &quot;EDITIONDATE&quot;: {&#xA;                        &quot;data_type&quot;: &quot;date&quot;,&#xA;                        &quot;value&quot;: &quot;2017-02-28&quot;&#xA;                      },&#xA;                      &quot;ERRORCOUNT&quot;: {&#xA;                        &quot;data_type&quot;: &quot;text&quot;,&#xA;                        &quot;value&quot;: &quot; &quot;&#xA;                      },&#xA;                      &quot;ERROR&quot;: {&#xA;                        &quot;data_type&quot;: &quot;text&quot;,&#xA;                        &quot;value&quot;: [&#xA;                          &quot;0000&quot;&#xA;                        ]&#xA;                      }&#xA;                    },&#xA;                    &quot;GCIRESP&quot;: {&#xA;                      &quot;Filler&quot;: {&#xA;                        &quot;data_type&quot;: &quot;text&quot;,&#xA;                        &quot;value&quot;: &quot;Ajinkya&quot;&#xA;                      }&#xA;                    }&#xA;                  }&#xA;                }&#xA;              }&#xA;            }&#xA;          }&#xA;        }&#xA;      }&#xA;    }&#xA;  }&#xA;}"
+			doc:name="Set Payload" /> -->
+	</flow>
+	<sub-flow name="SuccessRequestResponse">
+		<set-property propertyName="http.status" value="#['200']"
+			doc:name="SetHttpStatus" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "200",
+      "returnReason": "Ok",
+      "diagText": "success"
+   },
+    "tradingResponse": {
+      "operationName": flowVars.operationNameVar,
+            "operationResultResponse": ""
+    }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+	<sub-flow name="FailedRequestResponse">
+		<set-property propertyName="http.status" value="#['200']"
+			doc:name="SetHttpStatus" />
+		<dw:transform-message doc:name="PrepareJsonResponse">
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": flowVars.messageId,
+      "responseTime": now as :string {format: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"},
+      "returnCode": "200",
+      "returnReason": "Operation not performed",
+      "diagText": flowVars.failedDescription
+   }
+}
+}]]></dw:set-payload>
+		</dw:transform-message>
+	</sub-flow>
+	<sub-flow name="GetRequestDetails">
+		<set-variable variableName="messageId" value="#[message:id]"
+			doc:name="messageId" />
+		<set-variable variableName="exchangeNameVar"
+			value="#[message.inboundProperties.exchangeName]" doc:name="exchangeNameVar" />
+		<set-variable variableName="tradingKeyVar"
+			value="#[message.inboundProperties.tradingKey]" doc:name="tradingKeyVar" />
+		<set-variable variableName="tradingSecretVar"
+			value="#[message.inboundProperties.tradingSecret]" doc:name="tradingSecretVar" />
+		<set-variable variableName="operationNameVar"
+			value="#[message.inboundProperties.operationName]" doc:name="operationNameVar" />
+
+		<set-variable variableName="currencyPairVar"
+			value="#[message.inboundProperties.currencyPair]" doc:name="currencyPairVar" />
+		<set-variable variableName="rateVar"
+			value="#[message.inboundProperties.rate]" doc:name="rateVar" />
+		<set-variable variableName="amountVar"
+			value="#[message.inboundProperties.amount]" doc:name="amountVar" />
+		<set-variable variableName="orderNumberVar"
+			value="#[message.inboundProperties.orderNumber]" doc:name="orderNumberVar" />
+		<set-variable variableName="currencyVar"
+			value="#[message.inboundProperties.currency]" doc:name="currencyVar" />
+		<set-variable variableName="fromAccountVar"
+			value="#[message.inboundProperties.fromAccount]" doc:name="fromAccountVar" />
+		<set-variable variableName="toAccountVar"
+			value="#[message.inboundProperties.toAccount]" doc:name="toAccountVar" />
+	</sub-flow>
+
+</mule>

@@ -1,0 +1,11 @@
+{
+"tradingServiceResponse": {
+ "common": {
+      "messageId": "78a5bb00-e485-11e7-b12e-f2f520524153",
+      "responseTime": "2017-12-19T11:56:07.718000Z",
+      "returnCode": "400",
+      "returnReason": "Bad request",
+      "diagText": "exception message"
+   }
+}
+}

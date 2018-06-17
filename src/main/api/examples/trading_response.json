@@ -1,0 +1,85 @@
+{
+  "tradingServiceResponse": {
+    "common": {
+      "messageId": "32713830-fcf4-11e7-91d9-0050569a45e6",
+      "responseTime": "2018-01-19T08:39:00.859000Z",
+      "returnCode": "200",
+      "returnReason": "Ok"
+    },
+    "rusResponse": {
+      "externalSystemResponseDetails": {
+        "serviceResponsePayload": {
+          "dpsHeader": {
+            "trackingId": "2344554454",
+            "applicationid": "TESTJSO",
+            "aliasName": "GCI",
+            "requestType": "DECISIONING",
+            "requestFormat": "JSON",
+            "traceLevel": "0",
+            "responseCode": "000",
+            "errorCode": "a",
+            "errorDesc": "a",
+            "responseheaderFiller": "a",
+            "dacode": 0
+          },
+          "responsePayloadData": {
+            "dpsService405": {
+              "serviceRequestPayload": {
+                "dpsHeader": {
+                  "trackingId": "2344554454",
+                  "applicationid": "TESTJSO",
+                  "aliasName": "GCI",
+                  "requestType": "DECISIONING",
+                  "requestFormat": "JSON",
+                  "traceLevel": "0"
+                },
+                "requestPayloadData": {
+                  "DAJSONDocument": {
+                    "OCONTROL": {
+                      "ALIAS": {
+                        "data_type": "text",
+                        "value": "GCI"
+                      },
+                      "SIGNATURE": {
+                        "data_type": "text",
+                        "value": "GCI"
+                      },
+                      "EDITION": {
+                        "data_type": "numeric",
+                        "value": 1
+                      },
+                      "OBJECTIVE": {
+                        "data_type": "text",
+                        "value": "DPF Global Composite Insurance, Revision 1.1"
+                      },
+                      "EDITIONDATE": {
+                        "data_type": "date",
+                        "value": "2017-02-28"
+                      },
+                      "ERRORCOUNT": {
+                        "data_type": "text",
+                        "value": " "
+                      },
+                      "ERROR": {
+                        "data_type": "text",
+                        "value": [
+                          "0000"
+                        ]
+                      }
+                    },
+                    "GCIRESP": {
+                      "Filler": {
+                        "data_type": "text",
+                        "value": "Ajinkya"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,127 @@
+#%RAML 0.8
+title: TradingMULEAPI
+version: v0.1
+baseUri: http://api.trading.com/api/{version}/
+
+documentation:
+  - title: Trading Mule API
+    content: Trading Mule API
+schemas:
+  - tradingJsonResponseSchema: !include schemas/trading_response_schema.json
+  - faultJsonSchema: !include schemas/fault-schema.json
+
+/trade:
+  displayName: Trading Mule API
+  get:
+    description: This endpoint will return result of different trade operation
+    headers:
+      exchangeName:
+        displayName: Exchange Name
+        description: Exchange name as input like
+        type: string
+        example: poloniex, bitfinex, bittrex
+        required: true
+      tradingKey:
+        displayName: Trading platform Key
+        description: Trading exchange key
+        type: string
+        example: 9FFJOTNC-J23RN3YR-5NFC8Z70-30O4XTBA
+        required: true
+      tradingSecret:
+        displayName: Trading platform secret
+        description: Trading exchange secret
+        type: string
+        example: application/json, application/xml
+        required: true
+      operationName:
+        displayName: Trade operation name
+        description: Trade exchange operation name
+        type: string
+        example: balanceCheck, buy, sell, cancelOrder, tradeHistory
+        required: true
+      currencyPair:
+        displayName: Currency Pair
+        description: Currency Pair
+        type: string
+        example: BTC_PINK
+        required: false
+      rate:
+        displayName: rate
+        description: rate
+        type: number
+        example: 123
+        required: false
+      amount:
+        displayName: amount
+        description: amount
+        type: number
+        example: 1
+        required: false
+      orderNumber:
+        displayName: Order number
+        description: Order number
+        type: number
+        example: 13004338717
+        required: false
+      currency:
+        displayName: Currency
+        description: Currency
+        type: number
+        example: 100
+        required: false
+      fromAccount:
+        displayName: From Account number
+        description: From Account number
+        type: string
+        example: 124378950389
+        required: false
+      toAccount:
+        displayName: To Account number
+        description: To account number
+        type: string
+        example: 124378950389
+        required: false
+    body:
+    responses:
+      200: 
+        description: !include documentation/200-description.txt
+        body:
+          application/json:
+            example: !include examples/trading_response.json
+            schema: tradingJsonResponseSchema
+      400:
+        description: !include documentation/400-description.txt
+        body:
+          application/json:
+            example: !include examples/400.json
+            schema: faultJsonSchema
+      404:
+        description: !include documentation/404-description.txt
+        body:
+          application/json:
+           example: !include examples/404.json
+           schema: faultJsonSchema
+      405:
+        description: !include documentation/405-description.txt
+        body:
+          application/json:
+           example: !include examples/405.json
+           schema: faultJsonSchema
+      407:
+        description: !include documentation/407-description.txt
+        body:
+          application/json:
+           example: !include examples/407.json
+           schema: faultJsonSchema
+      415:
+        description: !include documentation/415-description.txt
+        body:
+          application/json:
+            example: !include examples/415.json
+            schema: faultJsonSchema
+      500:
+        description: !include documentation/500-description.txt
+        body:
+          application/json:
+            example: !include examples/500.json
+            schema: faultJsonSchema
